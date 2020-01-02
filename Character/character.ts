@@ -9,14 +9,15 @@ import { axe } from "../Items/items";
     protected raceAbilities: string[] = [];
     protected classAbilities:string[] = [];
     protected inventory: IItem[] = [];
-    protected Health: number = 100;
+    protected health: number = 100;
+    protected damageDone: number =0;
     protected attributes: IAttributes = {
       STR: 10,
       DEX: 10,
       CON: 10,
       WILL: 10,
       INT: 10,
-      MAGIC:0.
+      MAGIC: 0.
     };
  
     constructor (name:string, age:number, sex:string, attributes?: IAttributes,) {
@@ -27,12 +28,16 @@ import { axe } from "../Items/items";
           this.attributes = attributes;
         }
     };
+    
+    charDamage(damage: number) {
+     this.damageDone += (this.attributes.STR + damage + this.attributes.MAGIC/3)
+    }  
 
     additem(Additem: IItem) {
       this.inventory.push(Additem) 
     }
     calcHealth(HealthBonus: number) {
-      this.Health += (this.attributes.CON-10)*10 + HealthBonus}
+      this.health += (this.attributes.CON-10)*10 + HealthBonus}
    
     allpyBonuses(bonusAtt: IAttributes) {
       this.attributes.STR += bonusAtt.STR;
@@ -83,13 +88,14 @@ import { axe } from "../Items/items";
       MAGIC: 10,
     }; 
     protected HealthBonus: number = -20;
-  
-    constructor(name:string, age:number, sex:string, attributes?: IAttributes) {
+
+      constructor(name:string, age:number, sex:string, attributes?: IAttributes) {
       super(name, age, sex, attributes);
       super.allpyBonuses(this.bonusAtrributes);
       super.addClassAbility("Restore Mana");
       super.additem(axe);
       super.calcHealth(this.HealthBonus)
+      super.charDamage(axe.damage)
     }
   
   }
@@ -129,8 +135,8 @@ import { axe } from "../Items/items";
       super.allpyBonuses(this.bonusAtrributes);
       super.addClassAbility("ShieldWall");
       super.additem(axe);
-      super.calcHealth(this.HealthBonus)
-
+      super.calcHealth(this.HealthBonus);
+      super.charDamage(axe.damage)
     }
   }
   const NewHuman = new HumanMage('Povylas', 16, SEX.Male)
