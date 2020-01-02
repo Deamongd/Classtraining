@@ -15,7 +15,10 @@ export interface IAttributes {
 
   export interface IItem {
     name: string,
-    damage: number,
+    damage: {
+        min:number,
+        max:number
+    }
     weight: number,
     durability: number,
   }
