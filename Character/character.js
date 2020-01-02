@@ -9,6 +9,8 @@ class Character {
         this.inventory = [];
         this.health = 100;
         this.damageDone = 0;
+        this.minDamageDone = 0;
+        this.maxDamageDone = 0;
         this.attributes = {
             STR: 10,
             DEX: 10,
@@ -25,8 +27,24 @@ class Character {
         }
     }
     ;
-    charDamage(damage) {
-        this.damageDone += (this.attributes.STR + damage + this.attributes.MAGIC / 3);
+    charDamageMin(damageMin) {
+        this.minDamageDone += damageMin;
+    }
+    charDamageMax(damageMax) {
+        this.maxDamageDone += damageMax;
+    }
+    charDamage() {
+        return this.damageDone += (this.attributes.STR - 10 + Math.round(Math.random() * (this.maxDamageDone - this.minDamageDone) + this.minDamageDone) + Math.round(this.attributes.MAGIC / 3));
+    }
+    attack(victim) {
+        victim.takeHit(this.charDamage());
+    }
+    takeHit(damage) {
+        this.health -= damage;
+        console.log(this.name + ' has hp ' + this.health + ' left');
+        if (this.health <= 0) {
+            console.log(this.name + ' dead...');
+        }
     }
     additem(Additem) {
         this.inventory.push(Additem);
@@ -86,7 +104,7 @@ class HumanMage extends Human {
         super.addClassAbility("Restore Mana");
         super.additem(items_1.axe);
         super.calcHealth(this.HealthBonus);
-        super.charDamage(items_1.axe.damage);
+        super.charDamage(items_1.axe.damage.min, items_1.axe.damage.max);
     }
 }
 class Orc extends Character {
@@ -121,12 +139,16 @@ class OrcWarrior extends Orc {
         this.HealthBonus = 20;
         super.allpyBonuses(this.bonusAtrributes);
         super.addClassAbility("ShieldWall");
-        super.additem(items_1.axe);
+        super.additem(items_1.sword);
         super.calcHealth(this.HealthBonus);
-        super.charDamage(items_1.axe.damage);
+        super.charDamageMin(items_1.sword.damage.min);
+        super.charDamageMax(items_1.sword.damage.max);
     }
 }
 const NewHuman = new HumanMage('Povylas', 16, types_1.SEX.Male);
 const NewOrcWarrior = new OrcWarrior('Antanas', 20, 'Male');
-console.log(NewHuman);
-console.log(NewOrcWarrior);
+for (let i = 1; i < 5; i++) {
+    console.log('Attack #' + i);
+    NewHuman.attack(NewOrcWarrior);
+    NewOrcWarrior.attack(NewHuman);
+}

@@ -1,5 +1,5 @@
 import { IAttributes, SEX, IItem } from "../types/types";
-import { axe } from "../Items/items";
+import { axe, sword } from "../Items/items";
 
 
   class Character {
@@ -10,7 +10,9 @@ import { axe } from "../Items/items";
     protected classAbilities:string[] = [];
     protected inventory: IItem[] = [];
     protected health: number = 100;
-    protected damageDone: number =0;
+    protected damageDone: number = 0;
+    protected minDamageDone: number = 0;
+    protected maxDamageDone: number = 0;
     protected attributes: IAttributes = {
       STR: 10,
       DEX: 10,
@@ -28,10 +30,31 @@ import { axe } from "../Items/items";
           this.attributes = attributes;
         }
     };
+git
+    charDamageMin(damageMin: number) {
+      this.minDamageDone += damageMin
+    }
+
+    charDamageMax(damageMax: number) {
+      this.maxDamageDone += damageMax
+
+    }
     
-    charDamage(damage: number) {
-     this.damageDone += (this.attributes.STR + damage + this.attributes.MAGIC/3)
-    }  
+    charDamage() {
+     return this.damageDone += (this.attributes.STR-10 + Math.round(Math.random()*(this.maxDamageDone - this.minDamageDone) + this.minDamageDone)  + Math.round(this.attributes.MAGIC/3))
+    } 
+
+    attack(victim: Character) {
+      victim.takeHit(this.charDamage());
+  }
+
+    takeHit(damage: number) {
+      this.health -= damage;
+      console.log(this.name + ' has hp ' + this.health + ' left');
+      if (this.health <= 0) {
+          console.log(this.name + ' dead...');
+      }
+  }
 
     additem(Additem: IItem) {
       this.inventory.push(Additem) 
@@ -95,7 +118,8 @@ import { axe } from "../Items/items";
       super.addClassAbility("Restore Mana");
       super.additem(axe);
       super.calcHealth(this.HealthBonus)
-      super.charDamage(axe.damage)
+      super.charDamageMin(axe.damage.min);
+      super.charDamageMax(axe.damage.max);
     }
   
   }
@@ -134,13 +158,18 @@ import { axe } from "../Items/items";
       super(name, age, sex, attributes);
       super.allpyBonuses(this.bonusAtrributes);
       super.addClassAbility("ShieldWall");
-      super.additem(axe);
+      super.additem(sword);
       super.calcHealth(this.HealthBonus);
-      super.charDamage(axe.damage)
+      super.charDamageMin(sword.damage.min);
+      super.charDamageMax(sword.damage.max);
     }
   }
   const NewHuman = new HumanMage('Povylas', 16, SEX.Male)
   const NewOrcWarrior = new OrcWarrior('Antanas', 20, 'Male')
 
-  console.log(NewHuman);
-  console.log(NewOrcWarrior);
+  
+  for (let i = 1; i < 5; i++) {
+    console.log('Attack #' + i);
+    NewHuman.attack(NewOrcWarrior);
+    NewOrcWarrior.attack(NewHuman);
+}
