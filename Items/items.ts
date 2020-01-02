@@ -18,4 +18,4 @@ export const sword: IItem = {
     },
     weight: 3,
     durability: 100,
-}
+} 

@@ -172,4 +172,4 @@ git
     console.log('Attack #' + i);
     NewHuman.attack(NewOrcWarrior);
     NewOrcWarrior.attack(NewHuman);
-}
+} 
